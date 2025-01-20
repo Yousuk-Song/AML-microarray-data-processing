@@ -360,21 +360,6 @@ rownames(cluster_annotation) <- cluster_annotation$Sample
 print(filtered_pca_df)
 print(cluster_annotation)
 
-
-
-# # 클러스터 비교 설정 (기존 + 새로운 비교 추가)
-pairwise_comparisons <- list(
-  "Cluster1_vs_Cluster2" = list("Cluster1", "Cluster2"),
-  "Cluster2_vs_Cluster3" = list("Cluster2", "Cluster3"),
-  "Cluster1_vs_Cluster3" = list("Cluster1", "Cluster3"),
-  "Cluster2_vs_Cluster1" = list("Cluster2", "Cluster1"),
-  "Cluster3_vs_Cluster2" = list("Cluster3", "Cluster2"),
-  "Cluster3_vs_Cluster1" = list("Cluster3", "Cluster1"),
-  "Cluster1_vs_Cluster23" = list("Cluster1", c("Cluster2", "Cluster3")),
-  "Cluster2_vs_Cluster13" = list("Cluster2", c("Cluster1", "Cluster3")),
-  "Cluster3_vs_Cluster12" = list("Cluster3", c("Cluster1", "Cluster2"))
-)
-
 # DEG 분석 및 저장 (upregulated, downregulated)
 pairwise_degs_list <- list()
 
@@ -453,59 +438,6 @@ pheatmap(
 )
 
 cat("All results (including upregulated and downregulated) have been saved to:", output_dir, "\n")
-
-
-
-#library(ggvenn)
-# 
-# # 세 비교군의 upregulated 및 downregulated 유전자 목록
-upregulated_genes_list <- list(
-  "Cluster1_vs_Cluster23" = rownames(pairwise_degs_list[["Cluster1_vs_Cluster23"]]$upregulated_genes),
-  "Cluster2_vs_Cluster13" = rownames(pairwise_degs_list[["Cluster2_vs_Cluster13"]]$upregulated_genes),
-  "Cluster3_vs_Cluster12" = rownames(pairwise_degs_list[["Cluster3_vs_Cluster12"]]$upregulated_genes)
-)
-
-downregulated_genes_list <- list(
-  "Cluster1_vs_Cluster23" = rownames(pairwise_degs_list[["Cluster1_vs_Cluster23"]]$downregulated_genes),
-  "Cluster2_vs_Cluster13" = rownames(pairwise_degs_list[["Cluster2_vs_Cluster13"]]$downregulated_genes),
-  "Cluster3_vs_Cluster12" = rownames(pairwise_degs_list[["Cluster3_vs_Cluster12"]]$downregulated_genes)
-)
-
-#1개 vs 3개 형식 비교군에 대한 upregulated 및 downregulated 유전자 목록 생성
-# upregulated_genes_list <- list(
-#   "Cluster1_vs_Cluster234" = rownames(pairwise_degs_list[["Cluster1_vs_Cluster234"]]$upregulated_genes),
-#   "Cluster2_vs_Cluster134" = rownames(pairwise_degs_list[["Cluster2_vs_Cluster134"]]$upregulated_genes),
-#   "Cluster3_vs_Cluster124" = rownames(pairwise_degs_list[["Cluster3_vs_Cluster124"]]$upregulated_genes),
-#   "Cluster4_vs_Cluster123" = rownames(pairwise_degs_list[["Cluster4_vs_Cluster123"]]$upregulated_genes)
-# )
-# 
-# downregulated_genes_list <- list(
-#   "Cluster1_vs_Cluster234" = rownames(pairwise_degs_list[["Cluster1_vs_Cluster234"]]$downregulated_genes),
-#   "Cluster2_vs_Cluster134" = rownames(pairwise_degs_list[["Cluster2_vs_Cluster134"]]$downregulated_genes),
-#   "Cluster3_vs_Cluster124" = rownames(pairwise_degs_list[["Cluster3_vs_Cluster124"]]$downregulated_genes),
-#   "Cluster4_vs_Cluster123" = rownames(pairwise_degs_list[["Cluster4_vs_Cluster123"]]$downregulated_genes)
-# )
-
-
-# # Upregulated 유전자 리스트
-# upregulated_genes_list <- list(
-#   "Cluster5_vs_Cluster1234" = rownames(pairwise_degs_list[["Cluster5_vs_Cluster1234"]]$upregulated_genes),
-#   "Cluster1_vs_Cluster2345" = rownames(pairwise_degs_list[["Cluster1_vs_Cluster2345"]]$upregulated_genes),
-#   "Cluster2_vs_Cluster1345" = rownames(pairwise_degs_list[["Cluster2_vs_Cluster1345"]]$upregulated_genes),
-#   "Cluster3_vs_Cluster1245" = rownames(pairwise_degs_list[["Cluster3_vs_Cluster1245"]]$upregulated_genes),
-#   "Cluster4_vs_Cluster1235" = rownames(pairwise_degs_list[["Cluster4_vs_Cluster1235"]]$upregulated_genes)
-# )
-# 
-# # Downregulated 유전자 리스트
-# downregulated_genes_list <- list(
-#   "Cluster5_vs_Cluster1234" = rownames(pairwise_degs_list[["Cluster5_vs_Cluster1234"]]$downregulated_genes),
-#   "Cluster1_vs_Cluster2345" = rownames(pairwise_degs_list[["Cluster1_vs_Cluster2345"]]$downregulated_genes),
-#   "Cluster2_vs_Cluster1345" = rownames(pairwise_degs_list[["Cluster2_vs_Cluster1345"]]$downregulated_genes),
-#   "Cluster3_vs_Cluster1245" = rownames(pairwise_degs_list[["Cluster3_vs_Cluster1245"]]$downregulated_genes),
-#   "Cluster4_vs_Cluster1235" = rownames(pairwise_degs_list[["Cluster4_vs_Cluster1235"]]$downregulated_genes)
-# )
-
-
 
 # 결과 확인
 print("Upregulated Genes List:")
@@ -639,6 +571,19 @@ pheatmap(
 )
 ggsave(file.path(output_dir, "Upregulated_DEG_Heatmap.png"), width = 10, height = 8)
 
+# # Downregulated DEG 히트맵 생성
+# pheatmap(
+#   downregulated_heatmap_data,
+#   scale = "row",
+#   annotation_col = cluster_annotation,
+#   show_rownames = TRUE,
+#   show_colnames = TRUE,
+#   main = "Downregulated DEG Heatmap"
+# )
+# ggsave(file.path(output_dir, "Downregulated_DEG_Heatmap.png"), width = 10, height = 8)
+# 
+# cat("Heatmaps for Upregulated and Downregulated DEGs saved to:", output_dir, "\n")
+# 
 
 
 
@@ -784,8 +729,6 @@ for (comp in names(go_results_list_down)) {
   }
 }
 
-
-
 #HLA ONLY!!
 hla_genes <- grep("HLA", rownames(gene_exprs), value = TRUE)
 hla_gene_exprs <- gene_exprs[hla_genes, ]
@@ -912,6 +855,7 @@ cat("Selected optimal number of clusters:", hla_num_clusters, "\n")
 dist_matrix <- dist(hla_filtered_pca$x[, 1:num_pcs_80])
 hla_hclust_clustering <- hclust(dist_matrix, method = "ward.D2")
 hla_hclust_clusters <- cutree(hclust(dist_matrix, method = "ward.D2"), k = hla_num_clusters)
+hla_hclust_clusters
 
 # Consensus Clustering
 library(ConsensusClusterPlus)
@@ -1124,7 +1068,7 @@ pheatmap(
   cluster_rows = FALSE,                # HLA 데이터가 클러스터링에 영향을 미치지 않도록 설정
   cluster_cols = col_clustering,       # 열 클러스터링 결과 적용
   annotation_col = cluster_annotation, # 클러스터 주석 추가
-  annotation_colors = annotation_colors, # 주석 색상 추가
+#  annotation_colors = annotation_colors, # 주석 색상 추가
   labels_row = row_labels,             # HLA 유전자만 이름 표시
   show_colnames = TRUE,                # 샘플 이름 표시
   #  gaps_row = nrow(clustering_data),    # HLA와 Upregulated 데이터 사이에 간격 추가
@@ -1172,7 +1116,7 @@ pheatmap(
   cluster_rows = FALSE,
   cluster_cols = col_clustering,
   annotation_col = cluster_annotation,  # (Optional) 다른 주석 추가
-  annotation_colors = annotation_colors,
+#  annotation_colors = annotation_colors,
   labels_row = row_labels,
   show_colnames = TRUE,  # 이제 Cell Line 이름이 열 이름으로 표시됨
   scale = "row",
@@ -1190,24 +1134,159 @@ cluster_annotation <- data.frame(
 rownames(cluster_annotation) <- cluster_annotation$Sample
 
 
+
+
+# # PDF 출력 디바이스 설정
+# pdf("/data/workbench/scRSEQ_AML/exdata/CancerFinder/Stemcell_DEG/DEG_result/Array_DEG/AML_heatmap_with_cellline.pdf", width = 10, height = 8)  # PDF 파일 이름과 크기 지정
+# 
+# # 히트맵 생성
+# pheatmap(
+#   final_heatmap_data,
+#   cluster_rows = FALSE,
+#   cluster_cols = col_clustering,
+#   annotation_col = cluster_annotation,  # (Optional) 다른 주석 추가
+#   annotation_colors = annotation_colors,
+#   labels_row = row_labels,
+#   show_colnames = TRUE,  # 열 이름 표시
+#   scale = "row",
+#   color = colorRampPalette(c("blue", "white", "red"))(50),
+#   main = "Heatmap with CellLine Names"
+# )
+# 
+# # PDF 저장 종료
+# dev.off()
+
+
+
+
+
+library(pheatmap)
+
+# 1. 데이터 클러스터링 및 정렬 함수 정의
+perform_clustering <- function(data, cluster_indices) {
+  row_dist <- dist(data)  # 거리 계산
+  row_clustering <- hclust(row_dist, method = "ward.D2")  # 클러스터링 수행
+  cluster_order <- order.dendrogram(as.dendrogram(row_clustering))  # 순서 추출
+  return(cluster_indices[cluster_order])
+}
+
+# 2. Gap 생성 함수 정의
+generate_gap <- function(ncol, gap_length = 20) {
+  gap_row <- matrix(NA, nrow = gap_length, ncol = ncol)
+  colnames(gap_row) <- colnames(final_heatmap_data)
+  rownames(gap_row) <- paste0("gap_", seq_len(gap_length))
+  return(gap_row)
+}
+
+# 3. 라벨 생성 함수 정의
+create_row_labels <- function(non_hla_labels, hla_labels, gap_length = 20) {
+  # Non-HLA 라벨 모두 빈 문자열로 설정
+  non_hla_labels <- rep("", length(non_hla_labels))
+  
+  # HLA 라벨 조건 처리
+  hla_labels_processed <- rep("", length(hla_labels))
+  for (i in seq(1, length(hla_labels), by = 30)) {
+    group_indices <- i:(i + 29)
+    group_indices <- group_indices[group_indices <= length(hla_labels)]
+    
+    if (length(group_indices) >= 15) {
+      hla_labels_processed[group_indices[15]] <- hla_labels[group_indices[15]]
+    }
+    if (length(group_indices) >= 45) {
+      hla_labels_processed[group_indices[45]] <- hla_labels[group_indices[45]]
+    }
+  }
+  
+  # Gap 라벨 생성
+  gap_labels <- rep("", gap_length)
+  
+  # 라벨 결합
+  return(c(non_hla_labels, gap_labels, hla_labels_processed))
+}
+
+# 4. Non-HLA와 HLA 데이터 분리
+non_hla_data <- final_heatmap_data[!(rownames(final_heatmap_data) %in% rownames(hla_repeated)), ]
+hla_data <- final_heatmap_data[rownames(final_heatmap_data) %in% rownames(hla_repeated), ]
+
+# 5. 클러스터링 수행
+non_hla_row_order <- perform_clustering(non_hla_data, rownames(non_hla_data))
+hla_row_order <- perform_clustering(hla_data, rownames(hla_data))
+
+# 6. 데이터 정렬 및 Gap 결합
+non_hla_data <- final_heatmap_data[non_hla_row_order, ]
+hla_data <- final_heatmap_data[hla_row_order, ]
+gap_row <- generate_gap(ncol(final_heatmap_data))
+final_ordered_with_gap <- rbind(non_hla_data, gap_row, hla_data)
+
+# 7. 행 라벨 생성
+non_hla_labels <- rownames(non_hla_data)
+hla_labels <- sapply(rownames(hla_data), function(label) strsplit(label, "\\.")[[1]][1])
+row_labels_with_gap <- create_row_labels(non_hla_labels, hla_labels, nrow(gap_row))
+
+# 8. Annotation 정렬
+final_annotation <- cluster_annotation[colnames(final_ordered_with_gap), , drop = FALSE]
+
+# 9. CellLine 데이터 매핑
+cell_line_data <- data.frame(
+  Sample = c(
+    "GSM2601198_SM02.CEL.gz", "GSM2601199_SM03.CEL.gz", "GSM2601200_SM04.CEL.gz",
+    "GSM2601201_SM05.CEL.gz", "GSM2601202_SM06.CEL.gz", "GSM2601203_SM07.CEL.gz",
+    "GSM2601204_SM08.CEL.gz", "GSM2601205_SM09.CEL.gz", "GSM2601206_SM10.CEL.gz",
+    "GSM2601207_SM11.CEL.gz", "GSM2601208_SM12.CEL.gz", "GSM2601210_SM14.CEL.gz",
+    "GSM2601211_SM15.CEL.gz", "GSM2601212_SM16.CEL.gz", "GSM2601213_SM17.CEL.gz",
+    "GSM2601214_SM18.CEL.gz", "GSM2601215_SM19.CEL.gz", "GSM2601216_SM20.CEL.gz",
+    "GSM2601217_SM21.CEL.gz", "GSM2601218_SM22.CEL.gz", "GSM2601219_SM23.CEL.gz",
+    "GSM2601220_SM24.CEL.gz", "GSM2601221_SM25.CEL.gz", "GSM2601222_SM26.CEL.gz",
+    "GSM2601223_SM27.CEL.gz", "GSM2601224_SM28.CEL.gz", "GSM2601225_SM29.CEL.gz",
+    "GSM2601229_SM33.CEL.gz", "GSM2601230_SM34.CEL.gz", "GSM2601231_SM35.CEL.gz",
+    "GSM2601232_SM36.CEL.gz", "GSM2601233_SM37.CEL.gz", "GSM2601235_SM39.CEL.gz",
+    "GSM2601237_SM41.CEL.gz", "GSM2601238_SM42.CEL.gz", "GSM2601239_SM43.CEL.gz",
+    "GSM2601241_SM45.CEL.gz", "GSM2601242_SM46.CEL.gz", "GSM2601244_SM48.CEL.gz"
+  ),
+  CellLine = c(
+    "ML-2", "OCI-AML2", "OCI-AML3", "OCI-M1", "OCI-M2", "SKM-1", "SIG-M5", "PLB-985",
+    "MOLM-13", "EOL-1", "HNT-34", "U937", "THP-1", "KG-1", "HL60/MX1", "MOLM14",
+    "MV4;11", "GDM-1", "KU812", "TUR", "K562", "TF-1a", "MM1", "MEG-A2", "Kasumi-1",
+    "NOMO-1", "HL60/MX2", "TF-1", "HEL", "KG1a", "Kasumi-6", "HL60", "SKNO-1",
+    "MM6", "AML-193", "Kasumi-3", "NB-4", "OCI-AML5", "AP-1060"
+  )
+)
+
+colnames(final_ordered_with_gap) <- cell_line_data$CellLine[
+  match(colnames(final_ordered_with_gap), cell_line_data$Sample)
+]
+
+# 10. 히트맵 생성
+pheatmap(
+  final_ordered_with_gap,
+  cluster_rows = FALSE,                     # 행 클러스터링 결과 고정
+  cluster_cols = col_clustering,            # 열 클러스터링 추가
+  annotation_col = final_annotation,        # 수정된 주석 데이터
+  labels_row = row_labels_with_gap,         # Gap 포함 라벨
+  show_colnames = TRUE,                     # Cell Line 이름 표시
+  scale = "row",                            # 행 기준 표준화
+  color = colorRampPalette(c("blue", "white", "red"))(50),  # 색상 조합
+  na_col = "white",                         # Gap을 하얀색으로 표시
+  main = "Heatmap with CellLine Names and Conditional HLA Labels"
+)
+
+
 # PDF 출력 디바이스 설정
 pdf("/data/workbench/scRSEQ_AML/exdata/CancerFinder/Stemcell_DEG/DEG_result/Array_DEG/AML_heatmap_with_cellline.pdf", width = 10, height = 8)  # PDF 파일 이름과 크기 지정
 
 # 히트맵 생성
 pheatmap(
-  final_heatmap_data,
-  cluster_rows = FALSE,
-  cluster_cols = col_clustering,
-  annotation_col = cluster_annotation,  # (Optional) 다른 주석 추가
-  annotation_colors = annotation_colors,
-  labels_row = row_labels,
-  show_colnames = TRUE,  # 열 이름 표시
-  scale = "row",
-  color = colorRampPalette(c("blue", "white", "red"))(50),
+  final_ordered_with_gap,
+  cluster_rows = FALSE,                     # 행 클러스터링 결과 고정
+  cluster_cols = col_clustering,            # 열 클러스터링 추가
+  annotation_col = final_annotation,        # 수정된 주석 데이터
+  labels_row = row_labels_with_gap,         # Gap 포함 라벨
+  show_colnames = TRUE,                     # 열 이름 표시 (Cell Line 이름)
+  scale = "row",                            # 행 기준 표준화
+  color = colorRampPalette(c("blue", "white", "red"))(50),  # 색상 조합
   main = "Heatmap with CellLine Names"
 )
 
 # PDF 저장 종료
 dev.off()
-
     
